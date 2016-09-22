@@ -69,33 +69,20 @@ public:
 
   bool update(const sensor_msgs::LaserScan& input_scan, sensor_msgs::LaserScan& filtered_scan)
   {
-
-    filtered_scan = input_scan;
-    filtered_scan.range_min = lower_threshold_;
-    filtered_scan.range_max = upper_threshold_;
-
-    int scan_range_size = (input_scan.ranges.size() + 1) * 0.5;
-    filtered_scan.ranges.clear();
-    filtered_scan.ranges.resize(scan_range_size);
-    filtered_scan.angle_increment = fabs(filtered_scan.angle_max - filtered_scan.angle_min) / (float) scan_range_size;
-
-    for (unsigned int i=0;
-         i < scan_range_size;
-         i++) // Need to check ever reading in the current scan
-    {
-      {
-
-    	  int index = i * 2;
-      if (input_scan.ranges[index] <= lower_threshold_ || input_scan.ranges[index] >= upper_threshold_)
-        {
-          filtered_scan.ranges[i] = std::numeric_limits<float>::quiet_NaN();
-        }
-      else
-        {
-    	  filtered_scan.ranges[i] = input_scan.ranges[index];
-        }
-      }
-    }
+	  filtered_scan = input_scan;
+      filtered_scan.range_min = lower_threshold_;
+      filtered_scan.range_max = upper_threshold_;
+	  for (unsigned int i=0;
+			  i < input_scan.ranges.size();
+			  i++) // Need to check ever reading in the current scan
+	  {
+		  {
+			  if (filtered_scan.ranges[i] <= lower_threshold_ || filtered_scan.ranges[i] >= upper_threshold_)
+			  {
+				  filtered_scan.ranges[i] = std::numeric_limits<float>::quiet_NaN();
+			  }
+		  }
+	  }
 
     return true;
   }
